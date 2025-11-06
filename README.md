@@ -2,171 +2,83 @@
 
 ***
 
-### Linked List Core Code (C++)
+## Problem Statement
 
-#### **Node Class**
-```cpp
-class Node {
-public:
-    int data;
-    Node* next;
-
-    Node(int value) {
-        data = value;
-        next = NULL;
-    }
-};
-```
-
-#### **Linked List Class**
-```cpp
-class List {
-private:
-    Node* head;
-    Node* tail;
-public:
-    List() {
-        head = NULL;
-        tail = NULL;
-    }
-};
-```
+- Given a **linked list**, reverse it in place.
+- Return the new head after reversal.
+- This is **LeetCode Problem 206**.
+- You are given the head of a singly linked list. Reverse the list, and return the head of the reversed linked list.
 
 ***
 
-#### **push_front (Insert at Beginning)**
-```cpp
-void push_front(int value) {
-    Node* newNode = new Node(value);
-    if (head == NULL) {
-        head = newNode;
-        tail = newNode;
-        return;
-    }
-    newNode->next = head;
-    head = newNode;
-}
-```
+## Approach Explanation
 
-#### **push_back (Insert at End)**
-```cpp
-void push_back(int value) {
-    Node* newNode = new Node(value);
-    if (head == NULL) {
-        head = newNode;
-        tail = newNode;
-        return;
-    }
-    tail->next = newNode;
-    tail = newNode;
-}
-```
+- You need **three pointers**:
+    - `prev` (initially `NULL`)
+    - `curr` (starts at `head`)
+    - `next` (helper to save next node before breaking the link)
 
-#### **printList (Print All Elements)**
-```cpp
-void printList() {
-    Node* temp = head;
-    while (temp != NULL) {
-        std::cout << temp->data << ' ';
-        temp = temp->next;
-    }
-    std::cout << std::endl;
-}
-```
+**Steps:**
 
-#### **pop_front (Remove First Element)**
-```cpp
-void pop_front() {
-    if (head == NULL) {
-        std::cout << "Linked List is empty" << std::endl;
-        return;
-    }
-    Node* temp = head;
-    head = head->next;
-    delete temp;
-}
-```
+1. Save `curr->next` in `next` (preserve the address of the next node).
+2. Reverse the link: make `curr->next = prev`.
+3. Move `prev` to `curr`.
+4. Move `curr` to `next`.
+5. Repeat until `curr` becomes NULL.
+6. At the end, `prev` is the new head.
 
-#### **pop_back (Remove Last Element)**
-```cpp
-void pop_back() {
-    if (head == NULL) {
-        std::cout << "Linked List is empty" << std::endl;
-        return;
-    }
-    Node* temp = head;
-    while (temp->next != tail)
-        temp = temp->next;
-    delete tail;
-    tail = temp;
-    tail->next = NULL;
-}
-```
+The traversal is done within a loop until all nodes are processed.
 
-#### **insert (Insert at Specific Position)**
-```cpp
-void insert(int value, int position) {
-    if (position < 0) {
-        std::cout << "Invalid position" << std::endl;
-        return;
-    }
-    if (position == 0) {
-        push_front(value);
-        return;
-    }
-    Node* temp = head;
-    for (int i = 0; i < position - 1 && temp != NULL; ++i)
-        temp = temp->next;
-    if (temp == NULL) {
-        std::cout << "Invalid position" << std::endl;
-        return;
-    }
-    Node* newNode = new Node(value);
-    newNode->next = temp->next;
-    temp->next = newNode;
-}
-```
+- **Space Complexity:** $$ O(1) $$, only 3 pointers used
+- **Time Complexity:** $$ O(n) $$, as we traverse the list once
 
-#### **search (Find Index of Element)**
+***
+
+## C++ Code
+
 ```cpp
-int search(int key) {
-    Node* temp = head;
-    int index = 0;
-    while (temp != NULL) {
-        if (temp->data == key)
-            return index;
-        temp = temp->next;
-        ++index;
+ListNode* reverseList(ListNode* head) {
+    ListNode* prev = NULL;
+    ListNode* curr = head;
+    ListNode* next = NULL;
+    while (curr != NULL) {
+        next = curr->next;    // Step 1: Save next node
+        curr->next = prev;    // Step 2: Reverse current node's pointer
+        prev = curr;          // Step 3: Move prev to current
+        curr = next;          // Step 4: Move curr to next
     }
-    return -1;
+    return prev;              // prev is the new head
 }
 ```
 
 ***
 
-### Explanations & Textual Concepts
+## Key Points from Explanation
 
-- **Linked List** is a linear, dynamic data structure.
-- Nodes contain *data* and a *pointer to next node*.
-- Memory locations for nodes are non-contiguous, unlike arrays.
-- Can only traverse in forward direction using the *head pointer*.
-- *Tail pointer* is optional; it points to the last node.
-- No direct indexing - iteration is necessary to access elements by position.
-- Main operations:
-    - **Insertion (push_front, push_back, insert at position)**
-    - **Deletion (pop_front, pop_back)**
-    - **Traversal (printList)**
-    - **Search (search)**
-- Time Complexity:
-    - `push_front`, `push_back` (with tail): $$O(1)$$
-    - `pop_front`: $$O(1)$$
-    - `pop_back`, `insert(middle)`, `search`: $$O(n)$$
-    - `printList`: $$O(n)$$
-- Edge Cases:
-    - Insert at 0 is equivalent to push_front.
-    - Handle empty list in all functions.
-    - Validate position for insert.
+- **Need to preserve next node's address** before breaking the link.
+- For every node, repeat 4 actions:  
+    1. Save next node
+    2. Reverse pointer
+    3. Move previous pointer
+    4. Move current pointer
+- **Stop** when current pointer becomes `NULL`.
+- At the end, new head is at the node pointed to by `prev`.
+- **No extra space** needed beyond pointers.
 
-All code and textual explanations above are based **exactly** on the sequence, style, and implementation presented in the video. No extra content has been added.[1]
+***
 
-[11](https://www.placementpreparation.io/blog/best-youtube-channels-to-learn-data-structures-and-algorithms/)
+## Example Dry Run
+
+Original:  1 → 2 → 3 → 4 → 5  
+Reversed:  5 → 4 → 3 → 2 → 1
+
+***
+
+**Summary:**  
+Always use three pointers and perform 4 repeatable steps in the loop for in-place reversal of singly linked lists. This is a logical, space-efficient approach used in interviews and coding problems.
+
+***
+
+This is the complete step-by-step textual and code extraction as explained in the video for **reversing a linked list**.[1]
+
+[1](https://www.youtube.com/watch?v=R-CKBYnOv1U&list=PLGjplNEQ1it-OKRcYlCEDpTiIB1YOcvn6&index=2)
