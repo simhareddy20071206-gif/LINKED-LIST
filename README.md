@@ -1,172 +1,63 @@
 
+***
+
+## Problem Statement
+
+- **Merge two sorted linked lists** into one sorted linked list (LeetCode Problem 21).
+- You are given the heads of two sorted linked lists, h1 and h2.
+- **Return the head of the new merged, sorted linked list.**
 
 ***
 
-### Linked List Core Code (C++)
+## Recursive Approach Explanation
 
-#### **Node Class**
-```cpp
-class Node {
-public:
-    int data;
-    Node* next;
-
-    Node(int value) {
-        data = value;
-        next = NULL;
-    }
-};
-```
-
-#### **Linked List Class**
-```cpp
-class List {
-private:
-    Node* head;
-    Node* tail;
-public:
-    List() {
-        head = NULL;
-        tail = NULL;
-    }
-};
-```
+- If either list is **empty** (null), return the other as the result.
+- At every step, compare the head values of h1 and h2:
+    - The **smaller** value node becomes the next node in the merged list.
+    - **Recursively** merge the rest.
+- Repeat until all nodes in both lists are merged in sorted order.
 
 ***
 
-#### **push_front (Insert at Beginning)**
-```cpp
-void push_front(int value) {
-    Node* newNode = new Node(value);
-    if (head == NULL) {
-        head = newNode;
-        tail = newNode;
-        return;
-    }
-    newNode->next = head;
-    head = newNode;
-}
-```
+## C++ Code
 
-#### **push_back (Insert at End)**
 ```cpp
-void push_back(int value) {
-    Node* newNode = new Node(value);
-    if (head == NULL) {
-        head = newNode;
-        tail = newNode;
-        return;
+ListNode* mergeTwoLists(ListNode* h1, ListNode* h2) {
+    if(h1 == NULL) return h2;
+    if(h2 == NULL) return h1;
+    if(h1->val <= h2->val) {
+        h1->next = mergeTwoLists(h1->next, h2);
+        return h1;
+    } else {
+        h2->next = mergeTwoLists(h1, h2->next);
+        return h2;
     }
-    tail->next = newNode;
-    tail = newNode;
-}
-```
-
-#### **printList (Print All Elements)**
-```cpp
-void printList() {
-    Node* temp = head;
-    while (temp != NULL) {
-        std::cout << temp->data << ' ';
-        temp = temp->next;
-    }
-    std::cout << std::endl;
-}
-```
-
-#### **pop_front (Remove First Element)**
-```cpp
-void pop_front() {
-    if (head == NULL) {
-        std::cout << "Linked List is empty" << std::endl;
-        return;
-    }
-    Node* temp = head;
-    head = head->next;
-    delete temp;
-}
-```
-
-#### **pop_back (Remove Last Element)**
-```cpp
-void pop_back() {
-    if (head == NULL) {
-        std::cout << "Linked List is empty" << std::endl;
-        return;
-    }
-    Node* temp = head;
-    while (temp->next != tail)
-        temp = temp->next;
-    delete tail;
-    tail = temp;
-    tail->next = NULL;
-}
-```
-
-#### **insert (Insert at Specific Position)**
-```cpp
-void insert(int value, int position) {
-    if (position < 0) {
-        std::cout << "Invalid position" << std::endl;
-        return;
-    }
-    if (position == 0) {
-        push_front(value);
-        return;
-    }
-    Node* temp = head;
-    for (int i = 0; i < position - 1 && temp != NULL; ++i)
-        temp = temp->next;
-    if (temp == NULL) {
-        std::cout << "Invalid position" << std::endl;
-        return;
-    }
-    Node* newNode = new Node(value);
-    newNode->next = temp->next;
-    temp->next = newNode;
-}
-```
-
-#### **search (Find Index of Element)**
-```cpp
-int search(int key) {
-    Node* temp = head;
-    int index = 0;
-    while (temp != NULL) {
-        if (temp->data == key)
-            return index;
-        temp = temp->next;
-        ++index;
-    }
-    return -1;
 }
 ```
 
 ***
 
-### Explanations & Textual Concepts
+## Key Points
 
-- **Linked List** is a linear, dynamic data structure.
-- Nodes contain *data* and a *pointer to next node*.
-- Memory locations for nodes are non-contiguous, unlike arrays.
-- Can only traverse in forward direction using the *head pointer*.
-- *Tail pointer* is optional; it points to the last node.
-- No direct indexing - iteration is necessary to access elements by position.
-- Main operations:
-    - **Insertion (push_front, push_back, insert at position)**
-    - **Deletion (pop_front, pop_back)**
-    - **Traversal (printList)**
-    - **Search (search)**
-- Time Complexity:
-    - `push_front`, `push_back` (with tail): $$O(1)$$
-    - `pop_front`: $$O(1)$$
-    - `pop_back`, `insert(middle)`, `search`: $$O(n)$$
-    - `printList`: $$O(n)$$
-- Edge Cases:
-    - Insert at 0 is equivalent to push_front.
-    - Handle empty list in all functions.
-    - Validate position for insert.
+- This is a **recursive solution**.
+- At each recursive call, the function decides which node (from h1 or h2) becomes the current node of the result list, then merges the remaining nodes.
+- When one list is **exhausted**, simply return the other list as the remainder.
+- **Time Complexity:** $$O(n + m)$$, where $$n$$ and $$m$$ are the lengths of the two lists.
+- **Space Complexity:** $$O(n + m)$$ due to recursion stack in the worst case.
 
-All code and textual explanations above are based **exactly** on the sequence, style, and implementation presented in the video. No extra content has been added.[1]
+***
 
-[11](https://www.placementpreparation.io/blog/best-youtube-channels-to-learn-data-structures-and-algorithms/)
+## Example
+
+If:
+- h1: 1 → 3 → 5
+- h2: 2 → 4 → 6
+
+Output after merging:
+- 1 → 2 → 3 → 4 → 5 → 6
+
+***
+
+This extraction is a direct and clear write-up of the explanation and code exactly as presented in the video for merging two sorted linked lists using recursion.[1]
+
+[1](https://www.youtube.com/watch?v=f8RPIb-0DDE&list=PLGjplNEQ1it-OKRcYlCEDpTiIB1YOcvn6&index=5)
